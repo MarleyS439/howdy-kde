@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*$py.class
+src/models/*.dat
+src/snapshots/*
+!src/snapshots/.gitkeep
+src/dlib-data/*.dat
+src/dlib-data/*.dat.bz2
+.DS_Store
