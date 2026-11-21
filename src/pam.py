@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # PAM interface in python, launches compare.py
 
 # Import required modules
@@ -36,7 +37,7 @@ def doAuth(pamh):
 
 	# Alert the user that we are doing face detection
 	if config.getboolean("core", "detection_notice"):
-		pamh.conversation(pamh.Message(pamh.PAM_TEXT_INFO, "Attempting face detection"))
+		pamh.conversation(pamh.Message(pamh.PAM_TEXT_INFO, "Tentando detecção facial"))
 
 	syslog.syslog(syslog.LOG_INFO, "Attempting facial authentication for user " + pamh.get_user())
 
@@ -46,7 +47,7 @@ def doAuth(pamh):
 	# Status 10 means we couldn't find any face models
 	if status == 10:
 		if not config.getboolean("core", "suppress_unknown"):
-			pamh.conversation(pamh.Message(pamh.PAM_ERROR_MSG, "No face model known"))
+			pamh.conversation(pamh.Message(pamh.PAM_ERROR_MSG, "Nenhum modelo facial cadastrado"))
 
 		syslog.syslog(syslog.LOG_NOTICE, "Failure, no face model known")
 		syslog.closelog()
@@ -69,20 +70,20 @@ def doAuth(pamh):
 	elif status == 13:
 		syslog.syslog(syslog.LOG_INFO, "Failure, image too dark")
 		syslog.closelog()
-		pamh.conversation(pamh.Message(pamh.PAM_ERROR_MSG, "Face detection image too dark"))
+		pamh.conversation(pamh.Message(pamh.PAM_ERROR_MSG, "Imagem muito escura para detecção facial"))
 		return pamh.PAM_AUTH_ERR
 	# Status 0 is a successful exit
 	elif status == 0:
 		# Show the success message if it isn't suppressed
 		if not config.getboolean("core", "no_confirmation"):
-			pamh.conversation(pamh.Message(pamh.PAM_TEXT_INFO, "Identified face as " + pamh.get_user()))
+			pamh.conversation(pamh.Message(pamh.PAM_TEXT_INFO, "Rosto identificado como " + pamh.get_user()))
 
 		syslog.syslog(syslog.LOG_INFO, "Login approved")
 		syslog.closelog()
 		return pamh.PAM_SUCCESS
 
 	# Otherwise, we can't discribe what happend but it wasn't successful
-	pamh.conversation(pamh.Message(pamh.PAM_ERROR_MSG, "Unknown error: " + str(status)))
+	pamh.conversation(pamh.Message(pamh.PAM_ERROR_MSG, "Erro desconhecido: " + str(status)))
 	syslog.syslog(syslog.LOG_INFO, "Failure, unknown error" + str(status))
 	syslog.closelog()
 	return pamh.PAM_SYSTEM_ERR
